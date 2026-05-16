@@ -1,0 +1,25 @@
+import 'dart:developer';
+import 'package:news_app/constants/constants.dart';
+import 'package:news_app/core/networking/api_endpoints.dart';
+import 'package:news_app/core/networking/dio_helper.dart';
+import 'package:news_app/features/home_screen/models/top_head_lines_model.dart';
+
+class SerachResultServices {
+  Future<ArticlesModel> searchItemByName(String query) async{
+    try {
+      final response = await DioHelper.getRequest(endPoint: ApiEndpoints.everything, query: {
+        "apiKey" : Constants.newsApiKey,
+        "q": query
+      });
+      if(response?.statusCode == 200){
+        ArticlesModel articlesModel = ArticlesModel.fromJson(response!.data);
+        log(articlesModel.totalResults.toString());
+        return articlesModel;
+      }
+      return Future.error("Something went wrong");
+    } catch (e) {
+      log(e.toString());
+      return Future.error(e.toString());
+    }
+  }
+}
